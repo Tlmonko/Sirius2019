@@ -16,13 +16,12 @@
     <h1 class="">База фотографий</h1>
 </div> -->
 <div class="container-fluid text-center header">
-    <h2>Загрузка файла</h2>
+    <h2 style="margin: 5px;">Загрузка файла</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="container" style="width: 500px;">
-                <input type="file" class="form-control-file" name="picture">
-                <button type="submit" class="">Загрузить картинку</button>
-            </div>
+        <div class="container" style="width: 250px;">
+                <input type="file" class="form-control-file" name="picture" style="margin-bottom: 5px;">
+                <button type="submit" class="btn btn-primary">Загрузить картинку</button>
         </div>
     </form>
 </div>

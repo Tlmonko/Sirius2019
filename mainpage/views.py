@@ -22,10 +22,10 @@ def index(request):
 
         image.thumbnail((300, 300))
         image.save(settings.MEDIA_ROOT + "/" + uploaded_file.name.split(".")[0] + "_min" + "." +
-                   uploaded_file.name.split(".")[1])
+                   uploaded_file.name.split(".")[-1])
         new_object_params = {"path": "/media/" + uploaded_file.name,
                              "path_thumbnails": "/media/" + uploaded_file.name.split(".")[0] + "_min" + "." +
-                                                uploaded_file.name.split(".")[1], "name": uploaded_file.name}
+                                                uploaded_file.name.split(".")[-1], "name": uploaded_file.name}
 
         Picture.objects.create(**new_object_params)
     pictures = Picture.objects.all()
