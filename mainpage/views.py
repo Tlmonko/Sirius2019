@@ -3,6 +3,7 @@ from django.core.files.storage import FileSystemStorage
 from PIL import Image
 from django.conf import settings
 from .models import Picture
+import os
 
 
 def index(request):
@@ -21,12 +22,23 @@ def index(request):
         image = image.crop((left, upper, right, lower))
 
         image.thumbnail((300, 300))
-        image.save(settings.MEDIA_ROOT + "/" + uploaded_file.name.split(".")[0] + "_min" + "." +
+        image.save(settings.MEDIA_ROOT + "/" + ".".join(uploaded_file.name.split(".")[:-1]) + "_min" + "." +
                    uploaded_file.name.split(".")[-1])
         new_object_params = {"path": "/media/" + uploaded_file.name,
-                             "path_thumbnails": "/media/" + uploaded_file.name.split(".")[0] + "_min" + "." +
+                             "path_thumbnails": "/media/" + ".".join(uploaded_file.name.split(".")[:-1]) + "_min" + "." +
                                                 uploaded_file.name.split(".")[-1], "name": uploaded_file.name}
 
         Picture.objects.create(**new_object_params)
+    elif request.method == "GET":
+        if "image" in request.GET:
+            print(request.GET)
+            obj = Picture.objects.get(path="/media/" + request.GET["image"])
+            obj.delete()
+            path = settings.MEDIA_ROOT + "/" + request.GET["image"]
+            path_min = settings.MEDIA_ROOT + "/" + ".".join(request.GET["image"].split(".")[:-1]) + "_min" + "." + request.GET["image"].split(".")[-1]
+            print(path, path_min)
+            if os.path.isfile(path) and os.path.isfile(path_min):
+                os.remove(path)
+                os.remove(path_min)
     pictures = Picture.objects.all()
     return render(request, "Html/mainpage.html", {"pictures_list": pictures})
