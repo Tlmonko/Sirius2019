@@ -11,7 +11,16 @@ def index(request):
         fs = FileSystemStorage()
         fs.save(uploaded_file.name, uploaded_file)
         image = Image.open(settings.MEDIA_ROOT + "/" + uploaded_file.name)
-        image.thumbnail((300, 300), Image.NEAREST)
+
+        width, height = image.size
+        side = min(width, height)
+        left, upper = (width - side) // 2, (height - side) // 2
+        right, lower = left + side, upper + side
+        print(left, upper, right, lower)
+        print(width, height)
+        image = image.crop((left, upper, right, lower))
+
+        image.thumbnail((300, 300))
         image.save(settings.MEDIA_ROOT + "/" + uploaded_file.name.split(".")[0] + "_min" + "." +
                    uploaded_file.name.split(".")[1])
         new_object_params = {"path": "/media/" + uploaded_file.name,
