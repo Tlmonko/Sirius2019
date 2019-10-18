@@ -5,30 +5,46 @@ from django.conf import settings
 from .models import Picture
 import os
 
+count_of_pictures = 0
+
+def get_images(request):
+    pictures = Picture.objects.all()
+    if len(pictures) >= count_of_pictures + 6:
+        pictures = pictures[count_of_pictures :count_of_pictures + 6]
+        count_of_pictures += 6
+    else:
+        pictures = pictures[count_of_pictures:]
+        count_of_pictures += len(pictures) - count_of_pictures * 6
+    return {"images": pictures}
 
 def index(request):
+    isBe = False
     if request.method == "POST":
         uploaded_file = request.FILES['picture']
         fs = FileSystemStorage()
-        fs.save(uploaded_file.name, uploaded_file)
-        image = Image.open(settings.MEDIA_ROOT + "/" + uploaded_file.name)
+        if os.path.isfile(settings.MEDIA_ROOT + "/" + uploaded_file.name):
+            isBe = True
+        else:
+            fs.save(uploaded_file.name, uploaded_file)
+            image = Image.open(settings.MEDIA_ROOT + "/" + uploaded_file.name)
 
-        width, height = image.size
-        side = min(width, height)
-        left, upper = (width - side) // 2, (height - side) // 2
-        right, lower = left + side, upper + side
-        print(left, upper, right, lower)
-        print(width, height)
-        image = image.crop((left, upper, right, lower))
+            width, height = image.size
+            side = min(width, height)
+            left, upper = (width - side) // 2, (height - side) // 2
+            right, lower = left + side, upper + side
+            print(left, upper, right, lower)
+            print(width, height)
+            image = image.crop((left, upper, right, lower))
 
-        image.thumbnail((300, 300))
-        image.save(settings.MEDIA_ROOT + "/" + ".".join(uploaded_file.name.split(".")[:-1]) + "_min" + "." +
-                   uploaded_file.name.split(".")[-1])
-        new_object_params = {"path": "/media/" + uploaded_file.name,
-                             "path_thumbnails": "/media/" + ".".join(uploaded_file.name.split(".")[:-1]) + "_min" + "." +
-                                                uploaded_file.name.split(".")[-1], "name": uploaded_file.name}
+            image.thumbnail((300, 300))
+            image.save(settings.MEDIA_ROOT + "/" + ".".join(uploaded_file.name.split(".")[:-1]) + "_min" + "." +
+                    uploaded_file.name.split(".")[-1])
+            pictures = Picture.objects.all()
+            new_object_params = {"path": "/media/" + uploaded_file.name,
+                                "path_thumbnails": "/media/" + ".".join(uploaded_file.name.split(".")[:-1]) + "_min" + "." +
+                                                    uploaded_file.name.split(".")[-1], "name": uploaded_file.name}
 
-        Picture.objects.create(**new_object_params)
+            Picture.objects.create(**new_object_params)
     elif request.method == "GET":
         if "image" in request.GET:
             print(request.GET)
@@ -41,4 +57,8 @@ def index(request):
                 os.remove(path)
                 os.remove(path_min)
     pictures = Picture.objects.all()
-    return render(request, "Html/mainpage.html", {"pictures_list": pictures})
+    count_of_pictures = 0
+    if isBe:
+        return render(request, "Html/mainpage.html", {"pictures_list": pictures, "param": "Картинка с таким названием уже существует!"})
+    else:
+        return render(request, "Html/mainpage.html", {"pictures_list": pictures, "param": ""})

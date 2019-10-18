@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <title>Фотобаза</title>
     {% load staticfiles %}
-    <script src="{% static "JS/jQuery.js" %}"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
-    <script src="{% static "bootstrap-4.3.1-dist/js/bootstrap.min.js" %}"></script>
     <link type="text/css" rel="stylesheet" href="{% static "bootstrap-4.3.1-dist/css/bootstrap.min.css" %}">
     <link type="text/css" rel="stylesheet" href="{% static "CSS/style.css" %}">
     <meta name="viewport" content="width=device-width">
@@ -16,28 +15,29 @@
     <h1 class="">База фотографий</h1>
 </div> -->
 <div class="container-fluid text-center header">
-    <h2 style="margin: 5px;">Загрузка файла</h2>
+    <h2 style="margin: 5px; color: #aaa">Загрузка файла</h2>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <div class="container" style="width: 250px;">
+        <div class="container" style="width: 260px;">
                 <input type="file" class="form-control-file" name="picture" style="margin-bottom: 5px;">
                 <button type="submit" class="btn btn-primary">Загрузить картинку</button>
         </div>
     </form>
+    <h2 id="warning">{{ param }}</h2>
 </div>
 <div class="text-center">
-<div class="container" id="main-container">
+<div class="container shadow-" id="main-container">
     <div class="row">
         {% for picture in pictures_list %}
-            <div class="col-md-4">
-                <div class="card mb-4 shadow-lg my-card" style="width: auto;">
+            <div class="col-md-4" id="{{ id }}">
+                <div class="card mb-4 my-card dark" style="width: auto;">
                     <img class="card-image" src="{{ picture.path_thumbnails }}" style="width: 100%; height: 300px; border-radius: 2px;">
                     <div class="card-body">
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 <a href="{{ picture.path }}" download="{{ picture.name }}" class="btn btn-outline-secondary">Скачать</a>
                                 <a href="{{ picture.path }}" class="btn btn-outline-primary">Открыть</a>
-                                <a class="btn btn-outline-danger" href="?image={{ picture.name }}">Удалить</a>
+                                <button @click="delete_image({{ id }})" class="btn btn-outline-danger" href="">Удалить</button>
                             </div>
                         </div>
                     </div>

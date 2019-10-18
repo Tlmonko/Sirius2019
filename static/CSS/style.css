@@ -1,9 +1,9 @@
 body {
-    background-color: #dbdbdb;
+    background-color: #828282;
 }
 
 #main-container {
-    background-color: #f2f2f2;
+    background-color: #525252;
     padding: 15px;
     border-radius: 5px;
     min-height: 500px;
@@ -13,17 +13,22 @@ body {
     margin-bottom: 20px;
     padding-top: 5px;
     padding-bottom: 10px;
-    background-color: #f2f2f2;
+    background-color: #333;
     box-shadow: 0 0 5px rgba(0,0,0,0.3);
   }
 
   .my-card {
-      box-shadow: 0 0 0px rgba(0,0,0,0.5) !important;
+      box-shadow: 0 0 7px rgba(0,0,0,0.5) !important;
       transition: box-shadow 0.08s ease-in-out;
       transition: transform 0.08s ease-in-out;
+      background-color: #333;
   }
 
   .my-card:hover {
     box-shadow: 0 0 10px rgba(0,0,0,0.6) !important;
     transform: scale(1.009, 1.009);
+}
+
+#warning {
+    color: #CC0000;
 }

@@ -18,4 +18,5 @@ from . import views
 
 urlpatterns = [
     url(r'^', views.index),
+    url(r'/api/^', views.get_images)
 ]
