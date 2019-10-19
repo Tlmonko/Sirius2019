@@ -11,11 +11,9 @@ def get_images(request):
     count_of_pictures = int(request.GET["images"])
     pictures = Picture.objects.all()
     if len(pictures) >= count_of_pictures + 6:
-        pictures = pictures[count_of_pictures :count_of_pictures + 6]
-        count_of_pictures += 6
+        pictures = pictures[count_of_pictures:count_of_pictures + 6]
     else:
         pictures = pictures[count_of_pictures:]
-        count_of_pictures += len(pictures) - count_of_pictures * 6
     images = list(map(
             lambda image: {
                 'id': image.id,
@@ -29,11 +27,9 @@ def get_images(request):
 
 def index(request):
     isBe = False
-    print(1)
     if request.method == "POST":
         uploaded_file = request.FILES['picture']
         fs = FileSystemStorage()
-        print(settings.MEDIA_ROOT + "/" + uploaded_file.name)
         if os.path.isfile(settings.MEDIA_ROOT + "/" + uploaded_file.name):
             isBe = True
         else:
