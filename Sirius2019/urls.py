@@ -18,10 +18,12 @@ from django.urls import path
 from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.conf import settings
+from mainpage.views import get_images
 urlpatterns = [path('admin/', admin.site.urls)]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 urlpatterns += [
+    url(r'^get_images/', get_images),
     url(r'^', include('mainpage.urls')),
 ]

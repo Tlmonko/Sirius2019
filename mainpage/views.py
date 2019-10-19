@@ -1,13 +1,14 @@
 from django.shortcuts import render
 from django.core.files.storage import FileSystemStorage
 from PIL import Image
+from django.http import JsonResponse
 from django.conf import settings
 from .models import Picture
 import os
 
-count_of_pictures = 0
 
 def get_images(request):
+    count_of_pictures = int(request.GET["images"])
     pictures = Picture.objects.all()
     if len(pictures) >= count_of_pictures + 6:
         pictures = pictures[count_of_pictures :count_of_pictures + 6]
@@ -15,13 +16,24 @@ def get_images(request):
     else:
         pictures = pictures[count_of_pictures:]
         count_of_pictures += len(pictures) - count_of_pictures * 6
-    return {"images": pictures}
+    images = list(map(
+            lambda image: {
+                'id': image.id,
+                'name': image.name,
+                'path': image.path,
+                'path_thumbnails': image.path_thumbnails
+            },
+            pictures
+        ))
+    return JsonResponse({"images": images}, safe=False)
 
 def index(request):
     isBe = False
+    print(1)
     if request.method == "POST":
         uploaded_file = request.FILES['picture']
         fs = FileSystemStorage()
+        print(settings.MEDIA_ROOT + "/" + uploaded_file.name)
         if os.path.isfile(settings.MEDIA_ROOT + "/" + uploaded_file.name):
             isBe = True
         else:
@@ -46,19 +58,17 @@ def index(request):
 
             Picture.objects.create(**new_object_params)
     elif request.method == "GET":
-        if "image" in request.GET:
-            print(request.GET)
-            obj = Picture.objects.get(path="/media/" + request.GET["image"])
+        if "id" in request.GET:
+            obj = Picture.objects.get(id=int(request.GET["id"]))
+            path = settings.MEDIA_ROOT[:-6] + obj.path
+            path_min = settings.MEDIA_ROOT[:-6] + ".".join(obj.path.split(".")[:-1]) + "_min" + "." + obj.path.split(".")[-1]
             obj.delete()
-            path = settings.MEDIA_ROOT + "/" + request.GET["image"]
-            path_min = settings.MEDIA_ROOT + "/" + ".".join(request.GET["image"].split(".")[:-1]) + "_min" + "." + request.GET["image"].split(".")[-1]
-            print(path, path_min)
             if os.path.isfile(path) and os.path.isfile(path_min):
                 os.remove(path)
                 os.remove(path_min)
     pictures = Picture.objects.all()
     count_of_pictures = 0
     if isBe:
-        return render(request, "Html/mainpage.html", {"pictures_list": pictures, "param": "Картинка с таким названием уже существует!"})
+        return render(request, "Html/mainpage.html", {"param": "Картинка с таким названием уже существует!"})
     else:
-        return render(request, "Html/mainpage.html", {"pictures_list": pictures, "param": ""})
+        return render(request, "Html/mainpage.html", {"param": ""})

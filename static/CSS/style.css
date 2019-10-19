@@ -7,6 +7,7 @@ body {
     padding: 15px;
     border-radius: 5px;
     min-height: 500px;
+    margin-bottom: 20px;
 }
 
 .header {
@@ -14,7 +15,7 @@ body {
     padding-top: 5px;
     padding-bottom: 10px;
     background-color: #333;
-    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
   }
 
   .my-card {
