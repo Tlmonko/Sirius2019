@@ -23,7 +23,7 @@ new Vue({
     methods: {
         scroll() {
             window.onscroll = () => {
-                let length_to_bottom = document.documentElement.scrollTop + window.innerHeight >= document.documentElement.offsetHeight - 250;
+                let length_to_bottom = document.documentElement.scrollTop + window.innerHeight == document.documentElement.offsetHeight;
                 if (length_to_bottom) {
                     this.get_images();
                 }
@@ -55,9 +55,7 @@ new Vue({
             .then(response => {
                 new_images = response.data.images;
                 for (let i = 0; i < new_images.length; i++) {
-                    if (new_images[i]["id"] > this.images.length){
-                        this.images.push(new_images[i])
-                    }
+                    this.images.push(new_images[i])
                 }
             })
         },
