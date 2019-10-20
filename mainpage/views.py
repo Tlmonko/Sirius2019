@@ -40,8 +40,6 @@ def index(request):
             side = min(width, height)
             left, upper = (width - side) // 2, (height - side) // 2
             right, lower = left + side, upper + side
-            print(left, upper, right, lower)
-            print(width, height)
             image = image.crop((left, upper, right, lower))
 
             image.thumbnail((300, 300))
